@@ -26,7 +26,14 @@
     />
     <div class="btns-form">
       <div v-if="mode === 'edit'" @click="onEditClick" class="btn">EDIT</div>
-      <div v-if="mode === 'add'" @click="submitData" class="btn">ADD +</div>
+      <div
+        v-if="mode === 'add'"
+        ref="getTotalValue"
+        @click="submitData"
+        class="btn"
+      >
+        ADD +
+      </div>
     </div>
   </div>
 </template>
@@ -44,7 +51,7 @@ export default {
       value: this.$route.query.value,
       date: this.$route.query.date || new Date().toLocaleDateString(),
       error: false,
-      mode: this.$route.params.mode
+      mode: this.$route.params.mode,
     };
   },
 
@@ -58,7 +65,7 @@ export default {
           id: this.$store.getters.getMaxId + 1,
           date: this.date,
           category: this.category,
-          value: this.value,
+          value: +this.value,
         });
         this.category = "";
         this.value = "";
@@ -66,14 +73,14 @@ export default {
       }
     },
 
-    onEditClick(){
+    onEditClick() {
       this.$store.commit("editCostsList", {
-          id: +this.$route.query.id,
-          date: this.date,
-          category: this.category,
-          value: this.value,
-        })
-    }
+        id: +this.$route.query.id,
+        date: this.date,
+        category: this.category,
+        value: +this.value,
+      });
+    },
   },
 
   // computed: {
@@ -148,13 +155,13 @@ export default {
 .closeModal::after {
   transform: rotate(-45deg);
 }
-  .btns-form{
-    width:300px; 
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
-  }
+.btns-form {
+  width: 300px;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
 
 .btn {
   margin-top: 20px;
@@ -172,7 +179,5 @@ export default {
     background-color: transparent;
     color: cadetblue;
   }
-
-
 }
 </style>
