@@ -7,10 +7,6 @@ export default new Vuex.Store({
   // хранилище данных
   state: {
     costsData: [],
-    currentPage: 1,
-    perPage: 5,
-    error: false,
-    // isPopupActive: false, +this.$route.query.page ||
   },
 
   // для вычисления производного состояния на основе состояния хранилища
@@ -19,18 +15,6 @@ export default new Vuex.Store({
     getCostsList: state => {
       return state.costsData;
     },
-    getPageCount: state => {
-      let l = state.costsData.length,
-        s = state.perPage;
-      return Math.ceil(l / s);
-    },
-    getPaginatedData: state => {
-      const start = (state.currentPage - 1) * state.perPage,
-        end = start + state.perPage;
-      return state.costsData.slice(start, end);
-    },
-    // getIsPopupActive: state => state.isPopupActive,
-    getCurrentPage: state => state.currentPage,
     getMaxId: state =>
       state.costsData.map(({ id }) => id).sort((a, b) => a - b)[
         state.costsData.length - 1
@@ -38,15 +22,10 @@ export default new Vuex.Store({
     getChartData: state => {
       let a = undefined;
       a = state.costsData.reduce((acc, cost) => {
-        console.log(acc);
         acc[cost.category] =
           acc[cost.category] === undefined
             ? cost.value
             : acc[cost.category] + cost.value;
-        // const costCateg = cost.category;
-        // const same = acc.find(element => element.category === costCateg);
-        // if (same !== undefined) same.value += cost.value;
-        // else acc.push(cost);
         return acc;
       }, {});
 
@@ -73,9 +52,10 @@ export default new Vuex.Store({
   mutations: {
     setCostsList: (state, payload) => (state.costsData = payload),
     addCostsList: (state, payload) => state.costsData.push(payload),
-    setCurrentPage: (state, payload) => (state.currentPage = payload),
-    removeCostsList: (state, payload) =>
-      state.costsData.splice(state.costsData.indexOf(payload), 1),
+    removeCostsList: (state, payload) => {
+      console.log(JSON.parse(JSON.stringify(payload)));
+      state.costsData = state.costsData.filter(el => el.id !== payload.id);
+    },
     editCostsList: (state, payload) =>
       (state.costsData = state.costsData.map(cost => {
         if (cost.id === payload.id) {
@@ -88,7 +68,7 @@ export default new Vuex.Store({
 
   // для обмена данными между клиентом-сервером (асинхронных операций)
   actions: {
-    async loadCosts({ commit }, currentPage) {
+    async loadCosts({ commit }) {
       const list = await new Promise((resolve, reject) => {
         setTimeout(() => {
           resolve([
@@ -106,7 +86,6 @@ export default new Vuex.Store({
         }, 1000);
       });
       commit("setCostsList", list);
-      commit("setCurrentPage", currentPage || 1); //currentPage = +this.$route.query.page
     },
   },
 });

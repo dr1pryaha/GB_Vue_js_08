@@ -91,50 +91,7 @@ export default {
   mounted() {
     this.chartData = this.$store.subscribe((mutation, state) => {
       this.chartData = { ...this.$store.getters.getChartData };
-      console.log(typeof this.chartData);
     });
   },
 };
-// methods: {
-//   getTotalValue() {
-//     let a = undefined;
-//     a = this.$store.getters.getCostsList.reduce((acc, cost) => {
-//       const costCateg = cost.category;
-//       const same = acc.find(element => element.category === costCateg);
-//       if (same !== undefined) same.value += cost.value;
-//       else acc.push(cost);
-//       return acc;
-//     }, []);
-
-//     return {labels: a.map(el =>
-//       el.category
-//     ), datasets:[{data: a.map(el =>
-//       el.value
-//     ), backgroundColor: [
-//             "#41B883",
-//             "#E46651",
-//             "#00D8FF",
-//             "#DD1B16",
-//             "#DD1654",
-//             "#DD1744"
-//           ]}]}
-
-//     // this.$set(this.chartData, "labels", a.map(el =>
-//     //   el.category
-//     // ));
-
-//     // this.$set(this.chartData.datasets[0], "data", a.map(el =>
-//     //   el.value
-//     // ))
-//   },
-// },
-
-// computed: {
-//   isCost() {
-//     console.log(
-//       (this.labels = this.$store.getters.getCostsList.map(cost => cost))
-//     );
-//   },
-// },
-// };
 </script>

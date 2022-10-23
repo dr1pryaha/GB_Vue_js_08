@@ -1,66 +1,86 @@
 <template>
-  <div id="app">
-    <nav>
-      <router-link to="/">
-        <img alt="Vue logo" src="./assets/logo.png"
-      /></router-link>
-    </nav>
-    <v-container>
-      <v-row>
-        <v-col>
-      <h1>My Personal Costs</h1>
-      <router-link to="/add/payment"><AddButton></AddButton></router-link>
-      <nav class="nav-costs">
-        <router-link class="router-link" to="/add/payment/food?value=200"
-          ><a class="btn-costs">Food</a>
-        </router-link>
-        <router-link class="router-link" to="/add/payment/transport?value=50"
-          ><a class="btn-costs">Transport</a>
-        </router-link>
-        <router-link
-          class="router-link"
-          to="/add/payment/entertanment?value=2000"
-          ><a class="btn-costs">Entertainment</a></router-link
-        >
-      </nav>
-      <router-view :key="$route.fullPath" />
-      <List></List></v-col>
-      <v-col><DoughnutChart
-    /></v-col></v-row></v-container>
-    <Pagination v-model="this.$store.currentPage"></Pagination>
-  </div>
+  <v-app>
+    <v-app-bar app>
+      <img alt="Vue logo" src="./assets/logo.png" class="logo" />
+      <h3 class="title">My Personal Costs</h3>
+    </v-app-bar>
+    <v-main>
+      <loader
+        id="preloader"
+        object="#41B883"
+        color1="#E46651"
+        color2="#00D8FF"
+        size="5"
+        speed="2"
+        bg="#343a40"
+        objectbg="#999793"
+        opacity="100"
+        name="circular"
+        v-if="shown === true"
+      ></loader>
+      <v-container fluid grid-list-md fill-height>
+        <v-row>
+          <List></List>
+          <v-col><DoughnutChart /></v-col></v-row
+      ></v-container>
+    </v-main>
+    <v-footer v-bind="localAttrs" :padless="padless">
+      <v-card flat tile width="100%" class="text-center">
+        <v-card-text>
+          <v-btn v-for="icon in icons" :key="icon" class="mx-4" icon>
+            <v-icon size="24px">
+              {{ icon }}
+            </v-icon>
+          </v-btn>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-text>
+          {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
+        </v-card-text>
+      </v-card>
+    </v-footer>
+  </v-app>
 </template>
 
 <script>
-import AddButton from "./components/AddButton.vue";
 import List from "./components/List.vue";
-import Pagination from "./components/Pagination.vue";
 import DoughnutChart from "./components/Doughnut.vue";
 
 export default {
   name: "App",
   components: {
-    AddButton,
     List,
-    Pagination,
     DoughnutChart,
   },
-  methods: {
-    show() {
-      this.isShown = true;
-    },
+  data: () => ({
+    icons: ["mdi-home", "mdi-email", "mdi-calendar", "mdi-delete"],
+    items: ["default", "absolute", "fixed"],
+    padless: true,
+    variant: "default",
+    shown: true,
+  }),
+  computed: {
+    localAttrs() {
+      const attrs = {};
 
-    hide() {
-      this.isShown = false;
-      console.log("hide");
+      if (this.variant === "default") {
+        attrs.absolute = false;
+        attrs.fixed = false;
+      } else {
+        attrs[this.variant] = true;
+      }
+      return attrs;
     },
-    // onBtnClick() {
-    //   this.$store.commit("setIsPopupActive", !this.$store.state.isPopupActive);
-    // },
   },
   mounted() {
-    this.$context.EventEmitter.$on("show", this.show);
-    this.$context.EventEmitter.$on("hide", this.hide);
+    if (this.$store.dispatch("loadCosts")) this.showToggle();
+  },
+  methods: {
+    showToggle() {
+      setTimeout(() => {
+        this.shown = false;
+      }, 1000);
+    },
   },
 };
 </script>
@@ -79,10 +99,6 @@ export default {
   margin: 30px auto;
   display: flex;
   justify-content: space-evenly;
-
-  &.router-link-exact-active {
-    color: #42b983;
-  }
 }
 .btn-costs {
   border: 2px solid cadetblue;
@@ -99,11 +115,25 @@ export default {
     border: 2px solid rgb(240, 193, 74);
   }
 }
-.router-link {
-  text-decoration: none;
-}
 
 h3 {
   margin: 0;
+}
+
+.title {
+  margin-left: 10px;
+  color: #2c3e50;
+}
+
+.logo {
+  height: 25px;
+}
+
+.container {
+  height: 100%;
+}
+
+a {
+  text-decoration: none;
 }
 </style>
