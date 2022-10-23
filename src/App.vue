@@ -73,13 +73,12 @@ export default {
     },
   },
   mounted() {
-    if (this.$store.dispatch("loadCosts")) this.showToggle();
+    this.$store.dispatch("loadCosts", this.showToggle);
   },
+
   methods: {
     showToggle() {
-      setTimeout(() => {
-        this.shown = false;
-      }, 1000);
+      this.shown = false;
     },
   },
 };
